@@ -4,49 +4,83 @@ import * as THREE from 'three'
 
 const ParticleWorld = () => {
     const group = useRef()
-    const frameCount = useRef(0)
+    const starsRef = useRef()
 
-    // Create multi-colored cosmic orbs for a futuristic aurora feel
-    const orbs = useMemo(() => {
-        return [
-            { pos: [-12, 8, -12], color: '#bc00ff', size: 18 },  // Neon Purple
-            { pos: [15, -10, -15], color: '#00ff8c', size: 22 }, // Emerald
-            { pos: [0, 0, -25], color: '#00f0ff', size: 30 },    // Electric Blue
-        ]
+    // Create random stars
+    const [starGeo, starMat] = useMemo(() => {
+        const geo = new THREE.BufferGeometry()
+        const count = 2000
+        const positions = new Float32Array(count * 3)
+
+        for (let i = 0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 100 // Spread across space
+        }
+
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+
+        const mat = new THREE.PointsMaterial({
+            size: 0.1,
+            color: '#ffffff',
+            transparent: true,
+            opacity: 0.6,
+            sizeAttenuation: true
+        })
+        return [geo, mat]
     }, [])
 
+    // Smooth scroll interpolation
+    const scrollY = useRef(0)
+
     useFrame((state) => {
-        if (!group.current) return
+        // Linear interpolation for smooth scroll effect
+        const targetScroll = window.scrollY * 0.005
+        scrollY.current += (targetScroll - scrollY.current) * 0.1
 
-        // Throttle to every 3rd frame for performance
-        frameCount.current++
-        if (frameCount.current % 3 !== 0) return
+        if (group.current) {
+            // Rotate the entire world based on scroll
+            group.current.rotation.y = scrollY.current * 0.2
+            group.current.rotation.x = scrollY.current * 0.1
 
-        const time = state.clock.getElapsedTime()
+            // Move camera slightly for parallax
+            state.camera.position.y = -scrollY.current * 2
+        }
 
-        group.current.children.forEach((orb, i) => {
-            // Organic cosmic drift
-            orb.position.x += Math.sin(time * 0.15 + i) * 0.005
-            orb.position.y += Math.cos(time * 0.2 + i) * 0.005
-        })
-
-        // Slow group rotation for shifting horizon
-        group.current.rotation.z = Math.sin(time * 0.05) * 0.1
+        if (starsRef.current) {
+            // Twinkle / Drift effect
+            starsRef.current.rotation.y -= 0.0005
+        }
     })
 
     return (
         <group ref={group}>
-            {orbs.map((orb, i) => (
-                <mesh key={i} position={orb.pos}>
-                    <sphereGeometry args={[orb.size, 16, 16]} />
-                    <meshBasicMaterial
-                        color={new THREE.Color(orb.color)}
-                        transparent={true}
-                        opacity={0.06}
-                        blending={THREE.AdditiveBlending}
-                    />
-                </mesh>
-            ))}
+            {/* Background Starfield */}
+            <points ref={starsRef} geometry={starGeo} material={starMat} />
+
+            {/* Floating Geometric Shapes - Cinematic Tech Feel */}
+            <mesh position={[5, 0, -10]} rotation={[0, 0, 0]}>
+                <icosahedronGeometry args={[2, 0]} />
+                <meshBasicMaterial color="#00f0ff" wireframe transparent opacity={0.1} />
+            </mesh>
+
+            <mesh position={[-6, -5, -8]} rotation={[0.5, 0.5, 0]}>
+                <dodecahedronGeometry args={[1.5, 0]} />
+                <meshBasicMaterial color="#bc00ff" wireframe transparent opacity={0.1} />
+            </mesh>
+
+            <mesh position={[8, -8, -12]}>
+                <octahedronGeometry args={[3, 0]} />
+                <meshBasicMaterial color="#00ff8c" wireframe transparent opacity={0.05} />
+            </mesh>
+
+            {/* Original Orbs - Kept for atmosphere */}
+            <mesh position={[-12, 8, -20]}>
+                <sphereGeometry args={[18, 16, 16]} />
+                <meshBasicMaterial color="#bc00ff" transparent opacity={0.03} blending={THREE.AdditiveBlending} />
+            </mesh>
+            <mesh position={[15, -10, -25]}>
+                <sphereGeometry args={[22, 16, 16]} />
+                <meshBasicMaterial color="#00ff8c" transparent opacity={0.03} blending={THREE.AdditiveBlending} />
+            </mesh>
         </group>
     )
 }
