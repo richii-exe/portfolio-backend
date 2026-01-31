@@ -18,7 +18,7 @@ import Contact from './sections/Contact'
 function App() {
     const containerRef = useRef(null)
     const [isHighPerf, setHighPerf] = useState(true)
-    const [theme, setTheme] = useState('light')
+    const [theme, setTheme] = useState('dark')
 
     useEffect(() => {
         if (theme === 'light') {
