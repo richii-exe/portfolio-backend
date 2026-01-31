@@ -2,6 +2,7 @@ import { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { motion } from 'framer-motion'
 import ParticleWorld from './components/3d/ParticleWorld'
+import CinematicOverlay from './components/3d/CinematicOverlay'
 import CinematicCursor from './components/ui/CinematicCursor'
 import ScrollTimeline from './components/ui/ScrollTimeline'
 import SmokeIntro from './components/ui/SmokeIntro'
@@ -21,7 +22,11 @@ function App() {
                 <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 2]}>
                     <Suspense fallback={null}>
                         <ParticleWorld />
+                        <CinematicOverlay />
                     </Suspense>
+                    <ambientLight intensity={0.5} />
+                    <pointLight position={[10, 10, 10]} intensity={1} color="#3b82f6" />
+                    <pointLight position={[-10, -10, -5]} intensity={0.5} color="#8b5cf6" />
                 </Canvas>
             </div>
 
