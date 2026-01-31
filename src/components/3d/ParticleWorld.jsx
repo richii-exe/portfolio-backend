@@ -9,7 +9,7 @@ const ParticleWorld = () => {
     // Create random stars
     const [starGeo, starMat] = useMemo(() => {
         const geo = new THREE.BufferGeometry()
-        const count = 2000
+        const count = 700 // Optimized for performance
         const positions = new Float32Array(count * 3)
 
         for (let i = 0; i < count * 3; i++) {

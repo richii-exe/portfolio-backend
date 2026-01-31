@@ -19,7 +19,7 @@ function App() {
         <main ref={containerRef} className="relative w-full min-h-screen bg-black overflow-x-hidden">
             {/* Layer 1: Three.js Particle World (Background) */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 2]}>
+                <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 1.5]} performance={{ min: 0.5 }}>
                     <Suspense fallback={null}>
                         <ParticleWorld />
                         <CinematicOverlay />
