@@ -22,37 +22,19 @@ try {
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    projectId: process.env.FIREBASE_PROJECT_ID
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID}.firebasestorage.app`
 });
 
 const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const ADMIN_PORT = process.env.ADMIN_PORT || 5001;
 
-// Create uploads directories
-const uploadsDir = path.join(__dirname, 'uploads');
-const reelsDir = path.join(uploadsDir, 'reels');
-const webdesignsDir = path.join(uploadsDir, 'webdesigns');
-
-[uploadsDir, reelsDir, webdesignsDir].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const type = req.path.includes('reels') ? 'reels' : 'webdesigns';
-        cb(null, path.join(uploadsDir, type));
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// Configure multer for memory storage (for Firebase)
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage,
@@ -79,6 +61,29 @@ app.use(express.json());
 // Serve static files
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 app.use('/uploads', express.static(uploadsDir));
+
+// Helper to upload file to Firebase Storage
+const uploadFileToFirebase = async (file, folder) => {
+    const filename = `${folder}/${Date.now()}-${file.originalname}`;
+    const fileUpload = bucket.file(filename);
+
+    const stream = fileUpload.createWriteStream({
+        metadata: {
+            contentType: file.mimetype
+        }
+    });
+
+    return new Promise((resolve, reject) => {
+        stream.on('error', (err) => reject(err));
+        stream.on('finish', async () => {
+            // Make the file public
+            await fileUpload.makePublic();
+            const url = `https://storage.googleapis.com/${bucket.name}/${filename}`;
+            resolve(url);
+        });
+        stream.end(file.buffer);
+    });
+};
 
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport({
@@ -320,14 +325,16 @@ app.post('/api/admin/reels', upload.single('file'), async (req, res) => {
             return res.status(400).json({ success: false, message: 'No file uploaded.' });
         }
 
+        // Upload to Firebase Storage
+        const publicUrl = await uploadFileToFirebase(file, 'reels');
+
         const reelData = {
             title: title || 'Untitled Reel',
             category: category || 'General',
-            filename: file.filename,
-            originalName: file.originalname,
+            filename: file.originalname, // Store original name for reference
             mimetype: file.mimetype,
             size: file.size,
-            url: `/uploads/reels/${file.filename}`,
+            url: publicUrl, // Store full HTTPS URL
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             isActive: true
         };
@@ -407,10 +414,18 @@ app.delete('/api/admin/reels/:id', async (req, res) => {
 
         if (doc.exists) {
             const data = doc.data();
-            // Delete the file
-            const filePath = path.join(uploadsDir, 'reels', data.filename);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+            // Delete from Cloud Storage if it's a cloud URL
+            if (data.url && data.url.includes('storage.googleapis.com')) {
+                try {
+                    const bucketName = bucket.name;
+                    const path = data.url.split(bucketName + '/')[1];
+                    if (path) {
+                        await bucket.file(decodeURIComponent(path)).delete();
+                        console.log('Deleted reel from storage:', path);
+                    }
+                } catch (err) {
+                    console.log('Error deleting reel from storage:', err.message);
+                }
             }
         }
 
@@ -455,15 +470,17 @@ app.post('/api/admin/webdesigns', upload.single('file'), async (req, res) => {
             return res.status(400).json({ success: false, message: 'No file uploaded.' });
         }
 
+        // Upload to Firebase Storage
+        const publicUrl = await uploadFileToFirebase(file, 'webdesigns');
+
         const webdesignData = {
             title: title || 'Untitled Design',
             category: category || 'Web Design',
             tech: tech || 'React',
-            filename: file.filename,
-            originalName: file.originalname,
+            filename: file.originalname,
             mimetype: file.mimetype,
             size: file.size,
-            url: `/uploads/webdesigns/${file.filename}`,
+            url: publicUrl,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             isActive: true
         };
@@ -544,10 +561,27 @@ app.delete('/api/admin/webdesigns/:id', async (req, res) => {
 
         if (doc.exists) {
             const data = doc.data();
-            // Delete the file
-            const filePath = path.join(uploadsDir, 'webdesigns', data.filename);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+            // Delete from Cloud Storage
+            if (data.url && data.url.includes('storage.googleapis.com')) {
+                // Parse filename from URL or use stored filename if valid
+                try {
+                    // Filename storage strategy: "webdesigns/TIMESTAMP-name.ext"
+                    // Ideally we stored the full path, but we stored 'filename' = 'originalName' in new logic?
+                    // Wait, in new POST logic: filename = file.originalname. 
+                    // We need the ACTUAL path in bucket to delete it.
+                    // The URL is: https://storage.googleapis.com/BUCKET/webdesigns/TIMESTAMP-name
+                    // To delete, we need the path "webdesigns/TIMESTAMP-name".
+                    // Since we didn't store the exact bucket path in a separate field, we must extract it from URL.
+
+                    const bucketName = bucket.name;
+                    const path = data.url.split(bucketName + '/')[1];
+                    if (path) {
+                        await bucket.file(decodeURIComponent(path)).delete();
+                        console.log('Deleted file from storage:', path);
+                    }
+                } catch (err) {
+                    console.log('Error deleting file properties from storage:', err.message);
+                }
             }
         }
 

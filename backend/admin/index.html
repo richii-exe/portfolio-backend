@@ -1203,8 +1203,8 @@
                         <tr>
                             <td>
                                 ${reel.mimetype?.startsWith('video')
-                            ? `<video src="${API_BASE}${reel.url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;"></video>`
-                            : `<img src="${API_BASE}${reel.url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;">`
+                            ? `<video src="${reel.url.startsWith('http') ? reel.url : API_BASE + reel.url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;"></video>`
+                            : `<img src="${reel.url.startsWith('http') ? reel.url : API_BASE + reel.url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;">`
                         }
                             </td>
                             <td>${reel.title}</td>
@@ -1303,8 +1303,8 @@
                         <tr>
                             <td>
                                 ${design.mimetype?.startsWith('video')
-                            ? `<video src="${API_BASE}${design.url}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;"></video>`
-                            : `<img src="${API_BASE}${design.url}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;">`
+                            ? `<video src="${design.url.startsWith('http') ? design.url : API_BASE + design.url}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;"></video>`
+                            : `<img src="${design.url.startsWith('http') ? design.url : API_BASE + design.url}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;">`
                         }
                             </td>
                             <td>${design.title}</td>

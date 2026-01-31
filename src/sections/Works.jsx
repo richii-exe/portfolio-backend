@@ -81,7 +81,7 @@ const Works = () => {
                                 {reel.url ? (
                                     reel.mimetype?.startsWith('video') ? (
                                         <video
-                                            src={`${API_BASE}${reel.url}`}
+                                            src={reel.url.startsWith('http') ? reel.url : `${API_BASE}${reel.url}`}
                                             className="absolute inset-0 w-full h-full object-cover"
                                             muted
                                             loop
@@ -91,7 +91,7 @@ const Works = () => {
                                         />
                                     ) : (
                                         <img
-                                            src={`${API_BASE}${reel.url}`}
+                                            src={reel.url.startsWith('http') ? reel.url : `${API_BASE}${reel.url}`}
                                             alt={reel.title}
                                             className="absolute inset-0 w-full h-full object-cover"
                                         />
@@ -154,7 +154,7 @@ const Works = () => {
                                         {web.url ? (
                                             web.mimetype?.startsWith('video') ? (
                                                 <video
-                                                    src={`${API_BASE}${web.url}`}
+                                                    src={web.url.startsWith('http') ? web.url : `${API_BASE}${web.url}`}
                                                     className="w-full h-full object-cover"
                                                     muted
                                                     loop
@@ -163,7 +163,7 @@ const Works = () => {
                                                 />
                                             ) : (
                                                 <img
-                                                    src={`${API_BASE}${web.url}`}
+                                                    src={web.url.startsWith('http') ? web.url : `${API_BASE}${web.url}`}
                                                     alt={web.title}
                                                     className="w-full h-full object-cover"
                                                 />
