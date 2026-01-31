@@ -47,8 +47,8 @@ const CinematicCursor = ({ theme = 'dark' }) => {
                 animate={{
                     scale: isHovering ? 2.5 : 1,
                     backgroundColor: isHovering
-                        ? (isDark ? 'rgba(0, 240, 255, 0.4)' : 'rgba(0, 102, 204, 0.4)')
-                        : (isDark ? '#fff' : '#111')
+                        ? (isDark ? 'rgba(0, 240, 255, 0.4)' : 'rgba(0, 0, 0, 0.3)')
+                        : (isDark ? '#fff' : '#000000')
                 }}
                 style={{
                     translateX: cursorX,

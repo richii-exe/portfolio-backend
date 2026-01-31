@@ -4,12 +4,11 @@
     left: 0;
     width: 8px;
     height: 8px;
-    background-color: var(--c-white);
+    background-color: #ffffff;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
-    /* Center it - Framer motion handles translateX/Y, but we need to offset width/height */
     mix-blend-mode: difference;
 }
 
@@ -19,7 +18,7 @@
     left: 0;
     width: 40px;
     height: 40px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
@@ -27,4 +26,10 @@
     filter: blur(8px);
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
     transition: width 0.3s var(--ease-cinematic), height 0.3s var(--ease-cinematic), background-color 0.3s;
+}
+
+/* Light Mode Cursor - Pure Black */
+.cursorGlowLight {
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.15) 0%, transparent 70%);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
