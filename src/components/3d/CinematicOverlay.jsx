@@ -179,9 +179,6 @@ const CinematicOverlay = ({ theme = 'dark' }) => {
         <group>
             {/* Scene 1: Floating Code/Data "Splash" */}
             <FloatingCode theme={theme} />
-
-            {/* Scene 2: Film Strip DNA (Side) */}
-            <FilmStripHelix />
         </group>
     )
 }
