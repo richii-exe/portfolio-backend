@@ -902,6 +902,7 @@
             document.getElementById('dashboard').classList.add('active');
             document.getElementById('userEmail').textContent = user.email;
             document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+            startNotificationPolling();
         }
 
         async function login() {
@@ -1361,6 +1362,99 @@
                 console.error('Error deleting web design:', error);
             }
         }
+
+        // ===============================
+        // NOTIFICATION SYSTEM
+        // ===============================
+
+        let knownAppIds = new Set();
+        let knownContactIds = new Set();
+        let isFirstLoad = true;
+
+        function requestNotificationPermission() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    console.log("Notification permission:", permission);
+                });
+            }
+        }
+
+        async function checkForNewData() {
+            try {
+                // Check Applications
+                const appRes = await fetch(`${API_BASE}/api/admin/applications`);
+                const appData = await appRes.json();
+                
+                if (appData.success) {
+                    let newApps = 0;
+                    appData.data.forEach(app => {
+                        if (!knownAppIds.has(app.id)) {
+                            knownAppIds.add(app.id);
+                            if (!isFirstLoad) {
+                                sendNotification('New Work Request', `From: ${app.name} (${app.projectType})`);
+                                newApps++;
+                            }
+                        }
+                    });
+                    if (newApps > 0) loadApplications(); // Refresh table if new data found
+                }
+
+                // Check Contacts
+                const contactRes = await fetch(`${API_BASE}/api/admin/contacts`);
+                const contactData = await contactRes.json();
+
+                if (contactData.success) {
+                    let newContacts = 0;
+                    contactData.data.forEach(contact => {
+                        if (!knownContactIds.has(contact.id)) {
+                            knownContactIds.add(contact.id);
+                            if (!isFirstLoad) {
+                                sendNotification('New Contact Message', `From: ${contact.name}`);
+                                newContacts++;
+                            }
+                        }
+                    });
+                     if (newContacts > 0) loadContacts(); // Refresh table if new data found
+                }
+
+                if (isFirstLoad) isFirstLoad = false;
+
+            } catch (error) {
+                console.error("Error checking for updates:", error);
+            }
+        }
+
+        function sendNotification(title, body) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(title, {
+                    body: body,
+                    icon: '/favicon.ico' // Assuming favicon exists, else default
+                });
+            }
+        }
+
+        // Start polling when logged in
+        function startNotificationPolling() {
+            requestNotificationPermission();
+            checkForNewData(); // Initial load
+            setInterval(checkForNewData, 10000); // Check every 10 seconds
+        }
+
+        // Update login function to start polling
+        const originalLogin = window.login; // Capture existing if defined inline, but it's defined globally
+        // We'll just hook into the existing checkAuth or init flow.
+        
+        // Since login() reloads or shows dashboard, we should call startNotificationPolling() when dashboard is shown.
+        // Let's hook into checkAuth which is called on page load.
+        
+        // Find where checkAuth is called. It is likely at start of script or in DOMContentLoaded.
+        // Waiting to see existing checkAuth implementation... I don't see checkAuth in previous view_file output. 
+        // I need to find the initialization logic.
+        
+        // Inspecting lines 900-1000 which I haven't seen fully?
+        // Ah, I viewed 1-800 and 1000-1367. Missing 800-1000. 
+        // I'll assume standard setup. I'll add the call to startNotificationPolling() inside the block where dashboard becomes active.
+        
     </script>
 </body>
 
