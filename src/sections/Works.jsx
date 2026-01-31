@@ -3,6 +3,29 @@ import { motion } from 'framer-motion'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
+// Helper function with retry for Render cold starts
+const fetchWithRetry = async (url, retries = 3, delay = 2000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 60000) // 60s timeout
+
+            const response = await fetch(url, { signal: controller.signal })
+            clearTimeout(timeoutId)
+
+            if (response.ok) {
+                return await response.json()
+            }
+        } catch (error) {
+            console.log(`Fetch attempt ${i + 1} failed:`, error.message)
+            if (i < retries - 1) {
+                await new Promise(resolve => setTimeout(resolve, delay))
+            }
+        }
+    }
+    return { success: false, data: [] }
+}
+
 const Works = () => {
     const [reels, setReels] = useState([])
     const [websites, setWebsites] = useState([])
@@ -11,16 +34,14 @@ const Works = () => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                // Fetch reels from API
-                const reelsRes = await fetch(`${API_BASE}/api/reels`)
-                const reelsData = await reelsRes.json()
+                // Fetch reels from API with retry
+                const reelsData = await fetchWithRetry(`${API_BASE}/api/reels`)
                 if (reelsData.success && reelsData.data.length > 0) {
                     setReels(reelsData.data)
                 }
 
-                // Fetch web designs from API
-                const webRes = await fetch(`${API_BASE}/api/webdesigns`)
-                const webData = await webRes.json()
+                // Fetch web designs from API with retry
+                const webData = await fetchWithRetry(`${API_BASE}/api/webdesigns`)
                 if (webData.success && webData.data.length > 0) {
                     setWebsites(webData.data)
                 }
