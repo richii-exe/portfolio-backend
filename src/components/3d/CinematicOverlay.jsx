@@ -171,13 +171,10 @@ const FilmStripHelix = () => {
 const CinematicOverlay = ({ theme = 'dark' }) => {
     return (
         <group>
-            {/* Scene 1: Exploding Lens Assembly (Top / Intro) */}
-            <LensAssembly />
-
-            {/* Scene 2: Floating Code/Data "Splash" (Middle) */}
+            {/* Scene 1: Floating Code/Data "Splash" */}
             <FloatingCode />
 
-            {/* Scene 3: Film Strip DNA (Side) */}
+            {/* Scene 2: Film Strip DNA (Side) */}
             <FilmStripHelix />
         </group>
     )
