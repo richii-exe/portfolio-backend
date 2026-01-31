@@ -29,18 +29,12 @@ const Intro = () => {
                     <div className="absolute -inset-10 bg-blue-600 rounded-full blur-[100px] opacity-10 group-hover:opacity-30 transition-all duration-1000"></div>
 
                     <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border border-white/20 bg-black/60 shadow-2xl flex items-center justify-center group-hover:border-blue-500/50 transition-colors">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,240,255,0.1)_0%,transparent_70%)]"></div>
-                        <div className="flex flex-col items-center relative z-10">
-                            <motion.div
-                                animate={{
-                                    height: [4, 40, 4],
-                                    backgroundColor: ['#bc00ff', '#00f0ff', '#00ff8c']
-                                }}
-                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                                className="w-[1px] mb-4"
-                            />
-                            <span className="text-white/40 text-[10px] font-bold tracking-[0.5em] uppercase">Visual Artifact</span>
-                        </div>
+                        <img
+                            src="/profile.jpg"
+                            alt="Richie"
+                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700 scale-110 group-hover:scale-100 transition-transform"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                     </div>
                 </motion.div>
 
