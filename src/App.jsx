@@ -37,7 +37,7 @@ function App() {
             {/* Layer 1: Three.js Particle World (Background) - Works in both themes */}
             {isHighPerf && (
                 <div className="fixed inset-0 z-0 pointer-events-none">
-                    <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 1.5]} performance={{ min: 0.5 }} frameloop="demand">
+                    <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 1.5]} performance={{ min: 0.5 }}>
                         <Suspense fallback={null}>
                             <ParticleWorld theme={theme} />
                             <CinematicOverlay theme={theme} />
