@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 48px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .login-card h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .login-card p {
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .error-message {
+            color: #ef4444;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        /* Dashboard */
+        .dashboard-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard-container.active {
+            display: block;
+        }
+
+        .login-container.hidden {
+            display: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+        }
+
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 48px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #888;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #fff;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            color: #ef4444;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h2 {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .stat-card.blue .value {
+            color: #3b82f6;
+        }
+
+        .stat-card.purple .value {
+            color: #8b5cf6;
+        }
+
+        .stat-card.green .value {
+            color: #10b981;
+        }
+
+        .stat-card.orange .value {
+            color: #f59e0b;
+        }
+
+        /* Data Table */
+        .data-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: #3b82f6;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .data-table td {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-unread {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .status-read {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6b7280;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.approve {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .action-btn.reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #888;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 48px;
+            color: #888;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #888;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <h1>Admin Dashboard</h1>
+            <p>Sign in to manage your portfolio</p>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="admin@example.com">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+
+            <button class="login-btn" onclick="login()">Sign In</button>
+            <p class="error-message" id="loginError"></p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard-container" id="dashboard">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-logo">🎬 Portfolio Admin</div>
+
+            <div class="nav-item active" onclick="showTab('overview')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+                Overview
+            </div>
+
+            <div class="nav-item" onclick="showTab('applications')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                Applications
+            </div>
+
+            <div class="nav-item" onclick="showTab('contacts')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
+                </svg>
+                Contacts
+            </div>
+
+            <div class="nav-item" onclick="showTab('reels')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                    </path>
+                </svg>
+                Video Reels
+            </div>
+
+            <div class="nav-item" onclick="showTab('webdesigns')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
+                </svg>
+                Web Designs
+            </div>
+
+            <button class="logout-btn" onclick="logout()">🚪 Sign Out</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h2 id="pageTitle">Dashboard Overview</h2>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <span id="userEmail">admin@example.com</span>
+                </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overviewTab">
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <h3>Total Applications</h3>
+                        <div class="value" id="statTotalApps">--</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <h3>Pending Applications</h3>
+                        <div class="value" id="statPendingApps">--</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <h3>Total Contacts</h3>
+                        <div class="value" id="statTotalContacts">--</div>
+                    </div>
+                    <div class="stat-card green">
+                        <h3>Unread Messages</h3>
+                        <div class="value" id="statUnreadContacts">--</div>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>Recent Applications</h3>
+                        <button class="refresh-btn" onclick="loadData()">Refresh</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Project Type</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentApplicationsTable">
+                            <tr>
+                                <td colspan="5" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Applications Tab -->
+            <div class="tab-content" id="applicationsTab">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>All Applications</h3>
+                        <button class="refresh-btn" onclick="loadApplications()">Refresh</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Project Type</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTable">
+                            <tr>
+                                <td colspan="7" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Contacts Tab -->
+            <div class="tab-content" id="contactsTab">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>All Contacts</h3>
+                        <button class="refresh-btn" onclick="loadContacts()">Refresh</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTable">
+                            <tr>
+                                <td colspan="6" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reels Tab -->
+            <div class="tab-content" id="reelsTab">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>Upload New Reel</h3>
+                    </div>
+                    <div style="padding: 24px;">
+                        <form id="reelUploadForm" enctype="multipart/form-data"
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 600px;">
+                            <div class="input-group">
+                                <label>Title</label>
+                                <input type="text" id="reelTitle" placeholder="Reel Title" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Category</label>
+                                <input type="text" id="reelCategory" placeholder="e.g., Commercial, Cinematic">
+                            </div>
+                            <div class="input-group" style="grid-column: 1 / -1;">
+                                <label>Video/Image File</label>
+                                <input type="file" id="reelFile" accept="video/*,image/*"
+                                    style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px;">
+                            </div>
+                            <button type="submit" class="action-btn approve"
+                                style="padding: 16px; grid-column: 1 / -1;">Upload Reel</button>
+                        </form>
+                        <div id="reelUploadStatus" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>All Reels</h3>
+                        <button class="refresh-btn" onclick="loadReels()">Refresh</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reelsTable">
+                            <tr>
+                                <td colspan="6" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Web Designs Tab -->
+            <div class="tab-content" id="webdesignsTab">
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>Upload New Web Design</h3>
+                    </div>
+                    <div style="padding: 24px;">
+                        <form id="webdesignUploadForm" enctype="multipart/form-data"
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 600px;">
+                            <div class="input-group">
+                                <label>Title</label>
+                                <input type="text" id="webdesignTitle" placeholder="Project Title" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Category</label>
+                                <input type="text" id="webdesignCategory" placeholder="e.g., Portfolio, E-commerce">
+                            </div>
+                            <div class="input-group">
+                                <label>Technology</label>
+                                <input type="text" id="webdesignTech" placeholder="e.g., React / Three.js">
+                            </div>
+                            <div class="input-group">
+                                <label>Image/Video File</label>
+                                <input type="file" id="webdesignFile" accept="image/*,video/*"
+                                    style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px;">
+                            </div>
+                            <button type="submit" class="action-btn approve"
+                                style="padding: 16px; grid-column: 1 / -1;">Upload Design</button>
+                        </form>
+                        <div id="webdesignUploadStatus" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <div class="section-header">
+                        <h3>All Web Designs</h3>
+                        <button class="refresh-btn" onclick="loadWebDesigns()">Refresh</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Tech</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="webdesignsTable">
+                            <tr>
+                                <td colspan="6" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Admin Credentials (verified by backend)
+        const ADMIN_EMAIL = 'richardson240806@gmail.com';
+        const ADMIN_PASSWORD = 'RICH@1024';
+
+        const API_BASE = window.location.origin;
+        let isLoggedIn = false;
+
+        // Check if already logged in (session storage)
+        window.onload = function () {
+            const savedLogin = sessionStorage.getItem('adminLoggedIn');
+            if (savedLogin === 'true') {
+                isLoggedIn = true;
+                showDashboard({ email: ADMIN_EMAIL });
+                loadData();
+            } else {
+                showLogin();
+            }
+        };
+
+        function showLogin() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('dashboard').classList.remove('active');
+        }
+
+        function showDashboard(user) {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            errorEl.textContent = '';
+
+            // Verify credentials
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                isLoggedIn = true;
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showDashboard({ email: email });
+                loadData();
+            } else {
+                errorEl.textContent = 'Invalid email or password. Please try again.';
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            sessionStorage.removeItem('adminLoggedIn');
+            showLogin();
+        }
+
+        function showTab(tab) {
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+
+            // Update title
+            const titles = {
+                overview: 'Dashboard Overview',
+                applications: 'Work Applications',
+                contacts: 'Contact Messages',
+                reels: 'Video Reels',
+                webdesigns: 'Web Designs'
+            };
+            document.getElementById('pageTitle').textContent = titles[tab];
+
+            // Load data for tab
+            if (tab === 'applications') loadApplications();
+            if (tab === 'contacts') loadContacts();
+            if (tab === 'reels') loadReels();
+            if (tab === 'webdesigns') loadWebDesigns();
+        }
+
+        async function loadData() {
+            await Promise.all([loadStats(), loadRecentApplications()]);
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/stats`);
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('statTotalApps').textContent = data.data.totalApplications;
+                    document.getElementById('statPendingApps').textContent = data.data.pendingApplications;
+                    document.getElementById('statTotalContacts').textContent = data.data.totalContacts;
+                    document.getElementById('statUnreadContacts').textContent = data.data.unreadContacts;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadRecentApplications() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/applications`);
+                const data = await res.json();
+
+                const tbody = document.getElementById('recentApplicationsTable');
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.slice(0, 5).map(app => `
+                        <tr>
+                            <td>${app.name}</td>
+                            <td>${app.email}</td>
+                            <td>${app.projectType}</td>
+                            <td><span class="status-badge status-${app.status}">${app.status}</span></td>
+                            <td>${formatDate(app.createdAt)}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No applications yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        async function loadApplications() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/applications`);
+                const data = await res.json();
+
+                const tbody = document.getElementById('applicationsTable');
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(app => `
+                        <tr>
+                            <td>${app.name}</td>
+                            <td>${app.email}</td>
+                            <td>${app.projectType}</td>
+                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${app.message}</td>
+                            <td><span class="status-badge status-${app.status}">${app.status}</span></td>
+                            <td>${formatDate(app.createdAt)}</td>
+                            <td>
+                                <button class="action-btn approve" onclick="updateApplication('${app.id}', 'approved')">Approve</button>
+                                <button class="action-btn reject" onclick="updateApplication('${app.id}', 'rejected')">Reject</button>
+                                <button class="action-btn delete" onclick="deleteApplication('${app.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No applications yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        async function loadContacts() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/contacts`);
+                const data = await res.json();
+
+                const tbody = document.getElementById('contactsTable');
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(contact => `
+                        <tr>
+                            <td>${contact.name}</td>
+                            <td>${contact.email}</td>
+                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${contact.message}</td>
+                            <td><span class="status-badge status-${contact.status}">${contact.status}</span></td>
+                            <td>${formatDate(contact.createdAt)}</td>
+                            <td>
+                                <button class="action-btn approve" onclick="updateContact('${contact.id}', 'read')">Mark Read</button>
+                                <button class="action-btn delete" onclick="deleteContact('${contact.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No contacts yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading contacts:', error);
+            }
+        }
+
+        async function updateApplication(id, status) {
+            try {
+                await fetch(`${API_BASE}/api/admin/applications/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadApplications();
+                loadStats();
+            } catch (error) {
+                console.error('Error updating application:', error);
+            }
+        }
+
+        async function updateContact(id, status) {
+            try {
+                await fetch(`${API_BASE}/api/admin/contacts/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadContacts();
+                loadStats();
+            } catch (error) {
+                console.error('Error updating contact:', error);
+            }
+        }
+
+        async function deleteApplication(id) {
+            if (!confirm('Are you sure you want to delete this application?')) return;
+
+            try {
+                await fetch(`${API_BASE}/api/admin/applications/${id}`, { method: 'DELETE' });
+                loadApplications();
+                loadStats();
+            } catch (error) {
+                console.error('Error deleting application:', error);
+            }
+        }
+
+        async function deleteContact(id) {
+            if (!confirm('Are you sure you want to delete this contact?')) return;
+
+            try {
+                await fetch(`${API_BASE}/api/admin/contacts/${id}`, { method: 'DELETE' });
+                loadContacts();
+                loadStats();
+            } catch (error) {
+                console.error('Error deleting contact:', error);
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Handle Enter key on password field
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('loginPassword').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+
+            // Set up form handlers
+            document.getElementById('reelUploadForm').addEventListener('submit', uploadReel);
+            document.getElementById('webdesignUploadForm').addEventListener('submit', uploadWebDesign);
+        });
+
+        // ===============================
+        // REELS FUNCTIONS
+        // ===============================
+
+        async function uploadReel(e) {
+            e.preventDefault();
+            const statusEl = document.getElementById('reelUploadStatus');
+            statusEl.innerHTML = '<span style="color: #3b82f6;">Uploading...</span>';
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('reelTitle').value);
+            formData.append('category', document.getElementById('reelCategory').value);
+            formData.append('file', document.getElementById('reelFile').files[0]);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/reels`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    statusEl.innerHTML = '<span style="color: #10b981;">✓ Reel uploaded successfully!</span>';
+                    document.getElementById('reelUploadForm').reset();
+                    loadReels();
+                    loadStats();
+                } else {
+                    statusEl.innerHTML = `<span style="color: #ef4444;">✗ ${data.message}</span>`;
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<span style="color: #ef4444;">✗ Failed to upload reel</span>';
+                console.error('Error uploading reel:', error);
+            }
+        }
+
+        async function loadReels() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/reels`);
+                const data = await res.json();
+                const tbody = document.getElementById('reelsTable');
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(reel => `
+                        <tr>
+                            <td>
+                                ${reel.mimetype?.startsWith('video')
+                            ? `<video src="${API_BASE}${reel.url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;"></video>`
+                            : `<img src="${API_BASE}${reel.url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;">`
+                        }
+                            </td>
+                            <td>${reel.title}</td>
+                            <td>${reel.category}</td>
+                            <td>
+                                <span class="status-badge ${reel.isActive ? 'status-approved' : 'status-rejected'}">
+                                    ${reel.isActive ? 'Active' : 'Hidden'}
+                                </span>
+                            </td>
+                            <td>${formatDate(reel.createdAt)}</td>
+                            <td>
+                                <button class="action-btn ${reel.isActive ? 'reject' : 'approve'}" onclick="toggleReel('${reel.id}', ${!reel.isActive})">
+                                    ${reel.isActive ? 'Hide' : 'Show'}
+                                </button>
+                                <button class="action-btn delete" onclick="deleteReel('${reel.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No reels yet. Upload your first reel above!</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading reels:', error);
+            }
+        }
+
+        async function toggleReel(id, isActive) {
+            try {
+                await fetch(`${API_BASE}/api/admin/reels/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isActive })
+                });
+                loadReels();
+            } catch (error) {
+                console.error('Error toggling reel:', error);
+            }
+        }
+
+        async function deleteReel(id) {
+            if (!confirm('Are you sure you want to delete this reel?')) return;
+
+            try {
+                await fetch(`${API_BASE}/api/admin/reels/${id}`, { method: 'DELETE' });
+                loadReels();
+                loadStats();
+            } catch (error) {
+                console.error('Error deleting reel:', error);
+            }
+        }
+
+        // ===============================
+        // WEB DESIGNS FUNCTIONS
+        // ===============================
+
+        async function uploadWebDesign(e) {
+            e.preventDefault();
+            const statusEl = document.getElementById('webdesignUploadStatus');
+            statusEl.innerHTML = '<span style="color: #3b82f6;">Uploading...</span>';
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('webdesignTitle').value);
+            formData.append('category', document.getElementById('webdesignCategory').value);
+            formData.append('tech', document.getElementById('webdesignTech').value);
+            formData.append('file', document.getElementById('webdesignFile').files[0]);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/webdesigns`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    statusEl.innerHTML = '<span style="color: #10b981;">✓ Web design uploaded successfully!</span>';
+                    document.getElementById('webdesignUploadForm').reset();
+                    loadWebDesigns();
+                    loadStats();
+                } else {
+                    statusEl.innerHTML = `<span style="color: #ef4444;">✗ ${data.message}</span>`;
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<span style="color: #ef4444;">✗ Failed to upload web design</span>';
+                console.error('Error uploading web design:', error);
+            }
+        }
+
+        async function loadWebDesigns() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/webdesigns`);
+                const data = await res.json();
+                const tbody = document.getElementById('webdesignsTable');
+
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(design => `
+                        <tr>
+                            <td>
+                                ${design.mimetype?.startsWith('video')
+                            ? `<video src="${API_BASE}${design.url}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;"></video>`
+                            : `<img src="${API_BASE}${design.url}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;">`
+                        }
+                            </td>
+                            <td>${design.title}</td>
+                            <td>${design.category}</td>
+                            <td>${design.tech}</td>
+                            <td>
+                                <span class="status-badge ${design.isActive ? 'status-approved' : 'status-rejected'}">
+                                    ${design.isActive ? 'Active' : 'Hidden'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="action-btn ${design.isActive ? 'reject' : 'approve'}" onclick="toggleWebDesign('${design.id}', ${!design.isActive})">
+                                    ${design.isActive ? 'Hide' : 'Show'}
+                                </button>
+                                <button class="action-btn delete" onclick="deleteWebDesign('${design.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No web designs yet. Upload your first design above!</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading web designs:', error);
+            }
+        }
+
+        async function toggleWebDesign(id, isActive) {
+            try {
+                await fetch(`${API_BASE}/api/admin/webdesigns/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isActive })
+                });
+                loadWebDesigns();
+            } catch (error) {
+                console.error('Error toggling web design:', error);
+            }
+        }
+
+        async function deleteWebDesign(id) {
+            if (!confirm('Are you sure you want to delete this web design?')) return;
+
+            try {
+                await fetch(`${API_BASE}/api/admin/webdesigns/${id}`, { method: 'DELETE' });
+                loadWebDesigns();
+                loadStats();
+            } catch (error) {
+                console.error('Error deleting web design:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

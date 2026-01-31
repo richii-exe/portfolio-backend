@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font Variables */
+:root {
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Syne', sans-serif;
+
+  /* Colors - Futuristic Neon Palette */
+  --c-black: #020202;
+  --c-void: #000000;
+  --c-white: #ffffff;
+  --c-blue-electric: #00f0ff;
+  --c-blue-deep: #0066ff;
+  --c-purple-neon: #bc00ff;
+  --c-emerald-neon: #00ff8c;
+  --c-tangerine-neon: #ff6b00;
+
+  --c-bg-glass: rgba(255, 255, 255, 0.03);
+  --c-border-glass: rgba(255, 255, 255, 0.08);
+
+  /* Easing */
+  --ease-cinematic: cubic-bezier(0.6, 0.01, 0.05, 0.95);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--c-void);
+  color: var(--c-white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Post-Processing Effects (Macro Commercial Feel) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Subtle Film Grain */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 99;
+}
+
+/* Hide scrollbar for cinematic feel */
+::-webkit-scrollbar {
+  display: none;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Typography Utilities */
+.h1-cinematic {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  text-transform: uppercase;
+}
+
+@keyframes scan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 1000px 0;
+  }
+}
+
+.glass-panel {
+  background: var(--c-bg-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--c-border-glass);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+}
