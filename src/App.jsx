@@ -31,10 +31,22 @@ function App() {
             </div>
 
             {/* Layer 2: Subtle Background Effect */}
-            <div className="fixed inset-0 z-[1] pointer-events-none overflow-hidden opacity-20">
-                {/* Static gradient overlay for subtle depth */}
-                <div className="absolute inset-0 bg-gradient-to-b from-blue-900/5 via-transparent to-purple-900/5" />
-            </div>
+            <motion.div
+                className="fixed inset-0 z-[1] pointer-events-none overflow-hidden opacity-30"
+                style={{
+                    background: 'linear-gradient(to bottom, #0a192f 0%, #000000 50%, #1a0b2e 100%)',
+                    backgroundSize: '100% 200%',
+                }}
+                animate={{
+                    backgroundPosition: ['0% 0%', '0% 100%']
+                }}
+                transition={{
+                    duration: 20,
+                    ease: "linear",
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                }}
+            />
 
             {/* Layer 3: Content */}
             <div className="relative z-10 flex flex-col gap-20 pb-20">

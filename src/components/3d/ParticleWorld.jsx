@@ -37,12 +37,17 @@ const ParticleWorld = () => {
         scrollY.current += (targetScroll - scrollY.current) * 0.1
 
         if (group.current) {
-            // Rotate the entire world based on scroll
-            group.current.rotation.y = scrollY.current * 0.2
-            group.current.rotation.x = scrollY.current * 0.1
+            // Rotate slightly for dynamic feel
+            group.current.rotation.y = scrollY.current * 0.1
 
-            // Move camera slightly for parallax
-            state.camera.position.y = -scrollY.current * 2
+            // FLY THROUGH EFFECT: Move Z forward based on scroll
+            // 5 is initial Z. We move closer as we scroll.
+            // Using modulo to create infinite loop illusion if needed, but for portfolio, linear travel is fine.
+            state.camera.position.z = 5 - (scrollY.current * 3)
+            state.camera.position.y = -scrollY.current * 0.5 // Reduce vertical move to focus on forward motion
+
+            // Ensure we never clip too close to singular points if not desired, 
+            // but flying through is cool.
         }
 
         if (starsRef.current) {
