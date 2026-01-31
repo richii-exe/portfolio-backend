@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import 'react-phone-input-2/lib/style.css'
+import PhoneInput from 'react-phone-input-2'
 
 const Application = () => {
     const [formData, setFormData] = useState({
@@ -71,15 +73,34 @@ const Application = () => {
                                 placeholder="email@example.com"
                             />
                         </div>
+
+
                         <div className="space-y-2">
                             <label className="text-xs uppercase tracking-widest text-blue-500 font-bold ml-1">Phone Number</label>
-                            <input
-                                type="tel"
-                                name="phone"
+                            <PhoneInput
+                                country={'us'}
                                 value={formData.phone}
-                                onChange={handleChange}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500 transition-colors"
-                                placeholder="+1 (555) 000-0000"
+                                onChange={phone => setFormData({ ...formData, phone })}
+                                inputStyle={{
+                                    width: '100%',
+                                    height: '56px',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '0.75rem',
+                                    color: 'white',
+                                    paddingLeft: '48px'
+                                }}
+                                buttonStyle={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '0.75rem 0 0 0.75rem',
+                                    borderRight: 'none'
+                                }}
+                                dropdownStyle={{
+                                    backgroundColor: '#1a1a1a',
+                                    color: 'white',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                                }}
                             />
                         </div>
                     </div>

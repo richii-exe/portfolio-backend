@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import 'react-phone-input-2/lib/style.css'
+import PhoneInput from 'react-phone-input-2'
 
 const ContactForm = () => {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
@@ -45,13 +47,33 @@ const ContactForm = () => {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm focus:border-blue-500 outline-none transition-colors"
             />
-            <input
-                type="tel"
-                placeholder="Phone (Optional)"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm focus:border-blue-500 outline-none transition-colors"
-            />
+            <div className="w-full">
+                <PhoneInput
+                    country={'us'}
+                    value={formData.phone}
+                    onChange={phone => setFormData({ ...formData, phone })}
+                    inputStyle={{
+                        width: '100%',
+                        height: '46px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '0.75rem',
+                        color: 'white',
+                        paddingLeft: '48px'
+                    }}
+                    buttonStyle={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '0.75rem 0 0 0.75rem',
+                        borderRight: 'none'
+                    }}
+                    dropdownStyle={{
+                        backgroundColor: '#1a1a1a',
+                        color: 'white',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}
+                />
+            </div>
             <textarea
                 placeholder="Message"
                 rows={4}
