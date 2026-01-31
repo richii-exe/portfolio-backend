@@ -8,7 +8,17 @@ const multer = require('multer');
 require('dotenv').config();
 
 // Initialize Firebase Admin SDK
-const serviceAccount = require('./serviceAccountKey.json');
+let serviceAccount;
+try {
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } else {
+        serviceAccount = require('./serviceAccountKey.json');
+    }
+} catch (error) {
+    console.error('Failed to load Firebase credentials:', error);
+    process.exit(1);
+}
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
