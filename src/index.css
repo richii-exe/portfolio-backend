@@ -24,6 +24,16 @@
   --ease-cinematic: cubic-bezier(0.6, 0.01, 0.05, 0.95);
 }
 
+.light-mode {
+  --c-void: #f0f2f5;
+  --c-black: #ffffff;
+  --c-white: #1a1a1a;
+  --c-bg-glass: rgba(0, 0, 0, 0.05);
+  --c-border-glass: rgba(0, 0, 0, 0.1);
+  --c-blue-electric: #0066cc;
+  /* Darker blue for visibility on white */
+}
+
 *,
 *::before,
 *::after {
