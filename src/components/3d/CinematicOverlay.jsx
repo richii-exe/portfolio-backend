@@ -94,8 +94,9 @@ const LensAssembly = () => {
     )
 }
 
-const FloatingCode = () => {
+const FloatingCode = ({ theme = 'dark' }) => {
     const group = useRef()
+    const isDark = theme === 'dark'
 
     // Create random blocks suggestive of code/data
     const blocks = useMemo(() => {
@@ -106,9 +107,14 @@ const FloatingCode = () => {
                 (Math.random() - 0.5) * 5   // Z
             ],
             scale: [Math.random() * 2 + 0.5, 0.1, 0.1],
-            color: Math.random() > 0.5 ? '#00f0ff' : '#00ff8c'
+            colorIndex: Math.random() > 0.5 ? 0 : 1
         }))
     }, [])
+
+    // Theme-aware colors - black in day mode
+    const colors = isDark
+        ? ['#00f0ff', '#00ff8c']
+        : ['#222222', '#333333']
 
     useFrame((state) => {
         const scrollY = window.scrollY
@@ -131,7 +137,7 @@ const FloatingCode = () => {
             {blocks.map((block, i) => (
                 <mesh key={i} position={block.pos}>
                     <boxGeometry args={block.scale} />
-                    <meshBasicMaterial color={block.color} wireframe opacity={0.3} transparent />
+                    <meshBasicMaterial color={colors[block.colorIndex]} wireframe opacity={isDark ? 0.3 : 0.5} transparent />
                 </mesh>
             ))}
         </group>
@@ -172,7 +178,7 @@ const CinematicOverlay = ({ theme = 'dark' }) => {
     return (
         <group>
             {/* Scene 1: Floating Code/Data "Splash" */}
-            <FloatingCode />
+            <FloatingCode theme={theme} />
 
             {/* Scene 2: Film Strip DNA (Side) */}
             <FilmStripHelix />
