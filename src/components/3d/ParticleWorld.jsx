@@ -26,9 +26,9 @@ const ParticleWorld = ({ theme = 'dark' }) => {
 
         const mat = new THREE.PointsMaterial({
             size: 0.1,
-            color: isDark ? '#ffffff' : '#0066cc', // Blue dots in day mode
+            color: isDark ? '#ffffff' : '#111111', // Black dots in day mode
             transparent: true,
-            opacity: isDark ? 0.6 : 0.3,
+            opacity: isDark ? 0.6 : 0.4,
             sizeAttenuation: true
         })
         return [geo, mat]
@@ -86,10 +86,10 @@ const ParticleWorld = ({ theme = 'dark' }) => {
         }
     })
 
-    // Theme-aware colors
-    const geoColor1 = isDark ? '#00f0ff' : '#0066cc'
-    const geoColor2 = isDark ? '#bc00ff' : '#6366f1'
-    const geoColor3 = isDark ? '#00ff8c' : '#10b981'
+    // Theme-aware colors - Black in day mode
+    const geoColor1 = isDark ? '#00f0ff' : '#222222'
+    const geoColor2 = isDark ? '#bc00ff' : '#333333'
+    const geoColor3 = isDark ? '#00ff8c' : '#444444'
 
     return (
         <group ref={group}>
