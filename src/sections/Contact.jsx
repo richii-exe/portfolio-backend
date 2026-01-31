@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 
 const ContactForm = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
     const [status, setStatus] = useState({ loading: false, success: null, error: null })
 
     const handleSubmit = async (e) => {
@@ -18,7 +18,7 @@ const ContactForm = () => {
 
             if (response.ok) {
                 setStatus({ loading: false, success: 'Message sent!', error: null })
-                setFormData({ name: '', email: '', message: '' })
+                setFormData({ name: '', email: '', phone: '', message: '' })
             } else {
                 throw new Error('Failed to send message.')
             }
@@ -43,6 +43,13 @@ const ContactForm = () => {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm focus:border-blue-500 outline-none transition-colors"
+            />
+            <input
+                type="tel"
+                placeholder="Phone (Optional)"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm focus:border-blue-500 outline-none transition-colors"
             />
             <textarea

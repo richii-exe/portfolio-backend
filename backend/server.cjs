@@ -99,12 +99,13 @@ const transporter = nodemailer.createTransport({
 // ===============================
 
 app.post('/api/apply', async (req, res) => {
-    const { name, email, projectType, message } = req.body;
+    const { name, email, phone, projectType, message } = req.body;
 
     try {
         const applicationData = {
             name,
             email,
+            phone: phone || 'N/A',
             projectType,
             message,
             type: 'application',
@@ -126,6 +127,7 @@ app.post('/api/apply', async (req, res) => {
             text: `
             Name: ${name}
             Email: ${email}
+            Phone: ${phone || 'N/A'}
             Project Type: ${projectType}
             Message: ${message}
             `
@@ -143,12 +145,13 @@ app.post('/api/apply', async (req, res) => {
 });
 
 app.post('/api/contact', async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, phone, message } = req.body;
 
     try {
         const contactData = {
             name,
             email,
+            phone: phone || 'N/A',
             message,
             type: 'contact',
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -162,6 +165,17 @@ app.post('/api/contact', async (req, res) => {
         res.status(200).json({ success: true, message: 'Message sent successfully!' });
 
         // Send email in background
+        const mailOptions = {
+            from: email,
+            to: 'richardson240806@gmail.com',
+            subject: `New Contact Message from ${name}`,
+            text: `
+            Name: ${name}
+            Email: ${email}
+            Phone: ${phone || 'N/A'}
+            Message: ${message}
+            `
+        };
         transporter.sendMail(mailOptions).then(() => {
             console.log('✅ Email notification sent');
         }).catch(emailError => {

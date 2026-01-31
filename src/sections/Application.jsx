@@ -5,6 +5,7 @@ const Application = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
         projectType: 'Video Editing',
         message: ''
     })
@@ -27,7 +28,7 @@ const Application = () => {
 
             if (response.ok) {
                 setStatus({ loading: false, success: 'Application sent successfully!', error: null })
-                setFormData({ name: '', email: '', projectType: 'Video Editing', message: '' })
+                setFormData({ name: '', email: '', phone: '', projectType: 'Video Editing', message: '' })
             } else {
                 throw new Error('Failed to send application.')
             }
@@ -68,6 +69,17 @@ const Application = () => {
                                 required
                                 className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500 transition-colors"
                                 placeholder="email@example.com"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs uppercase tracking-widest text-blue-500 font-bold ml-1">Phone Number</label>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                                placeholder="+1 (555) 000-0000"
                             />
                         </div>
                     </div>

@@ -683,6 +683,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Phone</th>
                                 <th>Project Type</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -709,6 +710,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Phone</th>
                                 <th>Project Type</th>
                                 <th>Message</th>
                                 <th>Status</th>
@@ -737,6 +739,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Phone</th>
                                 <th>Message</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -1007,13 +1010,14 @@
                         <tr>
                             <td>${app.name}</td>
                             <td>${app.email}</td>
+                            <td>${app.phone || 'N/A'}</td>
                             <td>${app.projectType}</td>
                             <td><span class="status-badge status-${app.status}">${app.status}</span></td>
                             <td>${formatDate(app.createdAt)}</td>
                         </tr>
                     `).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No applications yet</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No applications yet</td></tr>';
                 }
             } catch (error) {
                 console.error('Error loading applications:', error);
@@ -1032,6 +1036,7 @@
                         <tr>
                             <td>${app.name}</td>
                             <td>${app.email}</td>
+                            <td>${app.phone || 'N/A'}</td>
                             <td>${app.projectType}</td>
                             <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${app.message}</td>
                             <td><span class="status-badge status-${app.status}">${app.status}</span></td>
@@ -1044,7 +1049,7 @@
                         </tr>
                     `).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No applications yet</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No applications yet</td></tr>';
                 }
             } catch (error) {
                 console.error('Error loading applications:', error);
@@ -1063,6 +1068,7 @@
                         <tr>
                             <td>${contact.name}</td>
                             <td>${contact.email}</td>
+                            <td>${contact.phone || 'N/A'}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${contact.message}</td>
                             <td><span class="status-badge status-${contact.status}">${contact.status}</span></td>
                             <td>${formatDate(contact.createdAt)}</td>
@@ -1073,7 +1079,7 @@
                         </tr>
                     `).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No contacts yet</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No contacts yet</td></tr>';
                 }
             } catch (error) {
                 console.error('Error loading contacts:', error);

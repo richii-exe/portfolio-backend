@@ -83,11 +83,9 @@ const Works = () => {
                                         <video
                                             src={reel.url.startsWith('http') ? reel.url : `${API_BASE}${reel.url}`}
                                             className="absolute inset-0 w-full h-full object-cover"
-                                            muted
-                                            loop
-                                            autoPlay
-                                            playsInline
-                                            preload="auto"
+                                            controls
+                                            preload="metadata"
+                                            poster=""
                                         />
                                     ) : (
                                         <img
@@ -156,10 +154,8 @@ const Works = () => {
                                                 <video
                                                     src={web.url.startsWith('http') ? web.url : `${API_BASE}${web.url}`}
                                                     className="w-full h-full object-cover"
-                                                    muted
-                                                    loop
-                                                    onMouseEnter={(e) => e.target.play()}
-                                                    onMouseLeave={(e) => { e.target.pause(); e.target.currentTime = 0; }}
+                                                    controls
+                                                    preload="metadata"
                                                 />
                                             ) : (
                                                 <img
