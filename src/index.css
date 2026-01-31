@@ -87,6 +87,29 @@ body::before {
   position: relative;
 }
 
+/* Light Mode Overrides for Tailwind classes */
+.light-mode .text-white {
+  color: var(--c-white) !important;
+}
+
+.light-mode .text-gray-300,
+.light-mode .text-gray-400,
+.light-mode .text-gray-500 {
+  color: #4b5563 !important;
+}
+
+.light-mode .bg-black {
+  background-color: var(--c-black) !important;
+}
+
+.light-mode .bg-black\/40 {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.light-mode .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
 /* Typography Utilities */
 .h1-cinematic {
   font-family: var(--font-heading);
@@ -94,6 +117,8 @@ body::before {
   letter-spacing: -0.05em;
   line-height: 0.85;
   text-transform: uppercase;
+  color: var(--c-white);
+  /* Ensures heading uses variable color */
 }
 
 @keyframes scan {
@@ -115,6 +140,25 @@ body::before {
 
 .text-glow {
   text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+}
+
+.light-mode .text-glow {
+  text-shadow: none;
+  /* Remove neon glow in day mode for clean look */
+  color: #111827;
+}
+
+/* Input Fields Adaptation */
+.light-mode input,
+.light-mode textarea {
+  color: #111827 !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light-mode input::placeholder,
+.light-mode textarea::placeholder {
+  color: #6b7280 !important;
 }
 
 /* Custom Phone Input Styles */
