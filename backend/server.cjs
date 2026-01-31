@@ -110,25 +110,27 @@ app.post('/api/apply', async (req, res) => {
         const docRef = await db.collection('applications').add(applicationData);
         console.log('✅ Application saved to Firebase with ID:', docRef.id);
 
-        try {
-            const mailOptions = {
-                from: email,
-                to: 'richardson240806@gmail.com',
-                subject: `New Work Request from ${name}`,
-                text: `
-                Name: ${name}
-                Email: ${email}
-                Project Type: ${projectType}
-                Message: ${message}
-                `
-            };
-            await transporter.sendMail(mailOptions);
-            console.log('✅ Email notification sent');
-        } catch (emailError) {
-            console.log('⚠️ Email failed but Firebase save succeeded:', emailError.message);
-        }
+        // Send response IMMEDIATELY, don't wait for email
+        res.status(200).json({ success: true, message: 'Application submitted successfully!' });
 
-        res.status(200).json({ success: true, message: 'Application sent successfully!' });
+        // Send email in background
+        const mailOptions = {
+            from: email,
+            to: 'richardson240806@gmail.com',
+            subject: `New Work Request from ${name}`,
+            text: `
+            Name: ${name}
+            Email: ${email}
+            Project Type: ${projectType}
+            Message: ${message}
+            `
+        };
+        transporter.sendMail(mailOptions).then(() => {
+            console.log('✅ Email notification sent');
+        }).catch(emailError => {
+            console.log('⚠️ Email failed but Firebase save succeeded:', emailError.message);
+        });
+
     } catch (error) {
         console.error('Error processing application:', error);
         res.status(500).json({ success: false, message: 'Failed to send application.' });
@@ -151,24 +153,16 @@ app.post('/api/contact', async (req, res) => {
         const docRef = await db.collection('contacts').add(contactData);
         console.log('✅ Contact saved to Firebase with ID:', docRef.id);
 
-        try {
-            const mailOptions = {
-                from: email,
-                to: 'richardson240806@gmail.com',
-                subject: `New Contact Message from ${name}`,
-                text: `
-                Name: ${name}
-                Email: ${email}
-                Message: ${message}
-                `
-            };
-            await transporter.sendMail(mailOptions);
-            console.log('✅ Email notification sent');
-        } catch (emailError) {
-            console.log('⚠️ Email failed but Firebase save succeeded:', emailError.message);
-        }
-
+        // Send response IMMEDIATELY
         res.status(200).json({ success: true, message: 'Message sent successfully!' });
+
+        // Send email in background
+        transporter.sendMail(mailOptions).then(() => {
+            console.log('✅ Email notification sent');
+        }).catch(emailError => {
+            console.log('⚠️ Email failed but Firebase save succeeded:', emailError.message);
+        });
+
     } catch (error) {
         console.error('Error processing contact:', error);
         res.status(500).json({ success: false, message: 'Failed to send message.' });
