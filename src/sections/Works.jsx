@@ -86,6 +86,15 @@ const Works = () => {
                                             controls
                                             preload="metadata"
                                             poster=""
+                                            muted={false}
+                                            loop
+                                            onMouseEnter={(e) => {
+                                                e.target.muted = false; // User requested sound on default
+                                                e.target.play().catch(err => console.log('Autoplay prevented:', err));
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.pause();
+                                            }}
                                         />
                                     ) : (
                                         <img
@@ -96,17 +105,9 @@ const Works = () => {
                                     )
                                 ) : null}
 
-                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60" />
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <motion.div
-                                        animate={{ scale: [1, 1.1, 1] }}
-                                        transition={{ repeat: Infinity, duration: 2 }}
-                                        className="w-20 h-20 rounded-full bg-purple-600/30 backdrop-blur-xl border border-purple-500/50 flex items-center justify-center"
-                                    >
-                                        <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[14px] border-l-white border-b-[8px] border-b-transparent ml-1" />
-                                    </motion.div>
-                                </div>
-                                <div className="absolute bottom-6 left-6">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 pointer-events-none" />
+
+                                <div className="absolute bottom-6 left-6 pointer-events-none">
                                     <p className="text-purple-500 text-xs font-bold uppercase tracking-widest mb-1">{reel.category}</p>
                                     <h3 className="text-2xl font-bold">{reel.title}</h3>
                                 </div>
@@ -156,6 +157,15 @@ const Works = () => {
                                                     className="w-full h-full object-cover"
                                                     controls
                                                     preload="metadata"
+                                                    muted={false}
+                                                    loop
+                                                    onMouseEnter={(e) => {
+                                                        e.target.muted = false;
+                                                        e.target.play().catch(err => console.log('Autoplay prevented:', err));
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.target.pause();
+                                                    }}
                                                 />
                                             ) : (
                                                 <img
