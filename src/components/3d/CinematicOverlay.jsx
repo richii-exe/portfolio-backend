@@ -168,7 +168,7 @@ const FilmStripHelix = () => {
     )
 }
 
-const CinematicOverlay = () => {
+const CinematicOverlay = ({ theme = 'dark' }) => {
     return (
         <group>
             {/* Scene 1: Exploding Lens Assembly (Top / Intro) */}

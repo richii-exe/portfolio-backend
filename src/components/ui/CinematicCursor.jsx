@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion, useSpring, useMotionValue } from 'framer-motion'
 import styles from './CinematicCursor.module.css'
 
-const CinematicCursor = () => {
+const CinematicCursor = ({ theme = 'dark' }) => {
     const mouseX = useMotionValue(0)
     const mouseY = useMotionValue(0)
 
@@ -17,6 +17,8 @@ const CinematicCursor = () => {
     const trailY = useSpring(mouseY, trailSpringConfig)
 
     const [isHovering, setIsHovering] = useState(false)
+
+    const isDark = theme === 'dark'
 
     useEffect(() => {
         const moveCursor = (e) => {
@@ -44,7 +46,9 @@ const CinematicCursor = () => {
                 className={styles.cursorPoint}
                 animate={{
                     scale: isHovering ? 2.5 : 1,
-                    backgroundColor: isHovering ? 'rgba(0, 240, 255, 0.4)' : '#fff'
+                    backgroundColor: isHovering
+                        ? (isDark ? 'rgba(0, 240, 255, 0.4)' : 'rgba(0, 102, 204, 0.4)')
+                        : (isDark ? '#fff' : '#111')
                 }}
                 style={{
                     translateX: cursorX,
@@ -54,7 +58,7 @@ const CinematicCursor = () => {
 
             {/* Soft Glow / Intelligence Orb */}
             <motion.div
-                className={styles.cursorGlow}
+                className={`${styles.cursorGlow} ${!isDark ? styles.cursorGlowLight : ''}`}
                 animate={{
                     scale: isHovering ? 2 : 1,
                     opacity: isHovering ? 0.8 : 0.4
@@ -62,6 +66,9 @@ const CinematicCursor = () => {
                 style={{
                     translateX: trailX,
                     translateY: trailY,
+                    background: isDark
+                        ? 'radial-gradient(circle, rgba(0,240,255,0.3) 0%, transparent 70%)'
+                        : 'radial-gradient(circle, rgba(0,102,204,0.2) 0%, transparent 70%)'
                 }}
             />
         </>

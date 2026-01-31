@@ -34,17 +34,17 @@ function App() {
 
     return (
         <main ref={containerRef} className={`relative w-full min-h-screen overflow-x-hidden transition-colors duration-500 ${theme === 'dark' ? 'bg-black' : 'bg-[#f0f2f5]'}`}>
-            {/* Layer 1: Three.js Particle World (Background) - Toggable */}
-            {isHighPerf && theme === 'dark' && (
+            {/* Layer 1: Three.js Particle World (Background) - Works in both themes */}
+            {isHighPerf && (
                 <div className="fixed inset-0 z-0 pointer-events-none">
-                    <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 1.5]} performance={{ min: 0.5 }}>
+                    <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 1.5]} performance={{ min: 0.5 }} frameloop="demand">
                         <Suspense fallback={null}>
-                            <ParticleWorld />
-                            <CinematicOverlay />
+                            <ParticleWorld theme={theme} />
+                            <CinematicOverlay theme={theme} />
                         </Suspense>
-                        <ambientLight intensity={0.5} />
-                        <pointLight position={[10, 10, 10]} intensity={1} color="#3b82f6" />
-                        <pointLight position={[-10, -10, -5]} intensity={0.5} color="#8b5cf6" />
+                        <ambientLight intensity={theme === 'dark' ? 0.5 : 0.8} />
+                        <pointLight position={[10, 10, 10]} intensity={1} color={theme === 'dark' ? "#3b82f6" : "#0066cc"} />
+                        <pointLight position={[-10, -10, -5]} intensity={0.5} color={theme === 'dark' ? "#8b5cf6" : "#6366f1"} />
                     </Canvas>
                 </div>
             )}
@@ -79,10 +79,10 @@ function App() {
                 <Contact />
             </div>
 
-            {/* Layer 3: UI Overlays */}
+            {/* Layer 3: UI Overlays - Now works in both themes */}
+            <CinematicCursor theme={theme} />
             {theme === 'dark' && (
                 <>
-                    <CinematicCursor />
                     <ScrollTimeline />
                     <SmokeIntro />
                 </>
