@@ -471,6 +471,61 @@ app.patch('/api/admin/reels/:id', async (req, res) => {
 });
 
 // ===============================
+// REVIEWS MANAGEMENT
+// ===============================
+
+// Get approved reviews (Public)
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const snapshot = await db.collection('reviews')
+            .where('status', '==', 'approved')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const reviews = [];
+        snapshot.forEach(doc => {
+            reviews.push({
+                id: doc.id,
+                ...doc.data(),
+                createdAt: doc.data().createdAt?.toDate?.() || null
+            });
+        });
+
+        res.status(200).json({ success: true, data: reviews });
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch reviews.' });
+    }
+});
+
+// Submit a new review
+app.post('/api/reviews', async (req, res) => {
+    try {
+        const { name, role, content, rating } = req.body;
+
+        const reviewData = {
+            name,
+            role: role || 'Client',
+            content,
+            rating: rating || 5,
+            status: 'approved', // Auto-approval as requested ("adds in the user page")
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        const docRef = await db.collection('reviews').add(reviewData);
+
+        res.status(200).json({
+            success: true,
+            message: 'Review submitted!',
+            data: { id: docRef.id, ...reviewData }
+        });
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        res.status(500).json({ success: false, message: 'Failed to submit review.' });
+    }
+});
+
+// ===============================
 // WEB DESIGNS MANAGEMENT
 // ===============================
 
