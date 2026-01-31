@@ -81,6 +81,7 @@ const Application = () => {
                                 country={'us'}
                                 value={formData.phone}
                                 onChange={phone => setFormData({ ...formData, phone })}
+                                enableSearch={true}
                                 inputStyle={{
                                     width: '100%',
                                     height: '56px',
@@ -100,6 +101,11 @@ const Application = () => {
                                     backgroundColor: '#1a1a1a',
                                     color: 'white',
                                     border: '1px solid rgba(255, 255, 255, 0.1)'
+                                }}
+                                searchStyle={{
+                                    backgroundColor: '#1a1a1a',
+                                    color: 'black',
+                                    border: '1px solid rgba(255, 255, 255, 0.2)'
                                 }}
                             />
                         </div>
