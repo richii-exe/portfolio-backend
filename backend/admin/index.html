@@ -872,9 +872,9 @@
         const API_BASE = window.location.origin;
         let isLoggedIn = false;
 
-        // Check if already logged in (session storage)
+        // Check if already logged in (local storage)
         window.onload = function () {
-            const savedLogin = sessionStorage.getItem('adminLoggedIn');
+            const savedLogin = localStorage.getItem('adminLoggedIn');
             if (savedLogin === 'true') {
                 isLoggedIn = true;
                 showDashboard({ email: ADMIN_EMAIL });
@@ -911,7 +911,7 @@
             // Verify credentials
             if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
                 isLoggedIn = true;
-                sessionStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminLoggedIn', 'true');
                 showDashboard({ email: email });
                 loadData();
             } else {
@@ -921,7 +921,7 @@
 
         function logout() {
             isLoggedIn = false;
-            sessionStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminLoggedIn');
             showLogin();
         }
 
