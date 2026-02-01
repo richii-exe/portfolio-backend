@@ -58,9 +58,12 @@ const upload = multer({
 app.use(cors());
 app.use(express.json());
 
+const uploadsDir = path.join(__dirname, 'uploads');
+
 // Serve static files
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 app.use('/uploads', express.static(uploadsDir));
+app.use(express.static(path.join(__dirname, '../dist'))); // Serve React Frontend
 
 // Helper to upload file to Firebase Storage
 const uploadFileToFirebase = async (file, folder) => {
@@ -523,7 +526,7 @@ app.patch('/api/admin/reels/:id', async (req, res) => {
 app.get('/api/reviews', async (req, res) => {
     try {
         const snapshot = await db.collection('reviews')
-            .where('status', '==', 'approved')
+            // .where('status', '==', 'approved') // Removed to avoid composite index requirement
             .orderBy('createdAt', 'desc')
             .get();
 
@@ -727,9 +730,19 @@ app.patch('/api/admin/webdesigns/:id', async (req, res) => {
     }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`\n🚀 Server is running on port ${PORT}`);
-    console.log(`📊 Admin Panel: http://localhost:${PORT}/admin`);
-    console.log('✅ Firebase Admin SDK initialized successfully\n');
+// Handle React routing, return all requests to React app
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
+
+// Export the app for Firebase Functions
+module.exports = app;
+
+// Only start the server if running directly (dev mode or standalone)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`\n🚀 Server is running on port ${PORT}`);
+        console.log(`📊 Admin Panel: http://localhost:${PORT}/admin`);
+        console.log('✅ Firebase Admin SDK initialized successfully\n');
+    });
+}

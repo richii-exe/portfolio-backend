@@ -8,6 +8,7 @@ import ScrollTimeline from './components/ui/ScrollTimeline'
 import SmokeIntro from './components/ui/SmokeIntro'
 import FloatingControls from './components/ui/FloatingControls'
 import ThemeToggle from './components/ui/ThemeToggle'
+import HeroSequence from './sections/HeroSequence'
 import Intro from './sections/Intro'
 import Works from './sections/Works'
 import Reviews from './sections/Reviews'
@@ -95,6 +96,7 @@ function App() {
 
             {/* Layer 3: Content */}
             <div className={`relative z-10 flex flex-col gap-20 pb-20 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                <HeroSequence />
                 <Intro />
                 <Works />
                 <Reviews />
