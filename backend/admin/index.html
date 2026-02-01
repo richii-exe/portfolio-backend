@@ -682,8 +682,8 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Contact No</th>
                                 <th>Email</th>
-                                <th>Phone</th>
                                 <th>Project Type</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -691,7 +691,7 @@
                         </thead>
                         <tbody id="recentApplicationsTable">
                             <tr>
-                                <td colspan="5" class="loading">Loading...</td>
+                                <td colspan="6" class="loading">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -709,8 +709,8 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Contact No</th>
                                 <th>Email</th>
-                                <th>Phone</th>
                                 <th>Project Type</th>
                                 <th>Message</th>
                                 <th>Status</th>
@@ -720,7 +720,7 @@
                         </thead>
                         <tbody id="applicationsTable">
                             <tr>
-                                <td colspan="7" class="loading">Loading...</td>
+                                <td colspan="8" class="loading">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -738,8 +738,8 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Contact No</th>
                                 <th>Email</th>
-                                <th>Phone</th>
                                 <th>Message</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -748,7 +748,7 @@
                         </thead>
                         <tbody id="contactsTable">
                             <tr>
-                                <td colspan="6" class="loading">Loading...</td>
+                                <td colspan="7" class="loading">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1010,8 +1010,8 @@
                     tbody.innerHTML = data.data.slice(0, 5).map(app => `
                         <tr>
                             <td>${app.name}</td>
-                            <td>${app.email}</td>
                             <td>${app.phone || 'N/A'}</td>
+                            <td>${app.email}</td>
                             <td>${app.projectType}</td>
                             <td><span class="status-badge status-${app.status}">${app.status}</span></td>
                             <td>${formatDate(app.createdAt)}</td>
@@ -1036,8 +1036,8 @@
                     tbody.innerHTML = data.data.map(app => `
                         <tr>
                             <td>${app.name}</td>
-                            <td>${app.email}</td>
                             <td>${app.phone || 'N/A'}</td>
+                            <td>${app.email}</td>
                             <td>${app.projectType}</td>
                             <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${app.message}</td>
                             <td><span class="status-badge status-${app.status}">${app.status}</span></td>
@@ -1068,8 +1068,8 @@
                     tbody.innerHTML = data.data.map(contact => `
                         <tr>
                             <td>${contact.name}</td>
-                            <td>${contact.email}</td>
                             <td>${contact.phone || 'N/A'}</td>
+                            <td>${contact.email}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${contact.message}</td>
                             <td><span class="status-badge status-${contact.status}">${contact.status}</span></td>
                             <td>${formatDate(contact.createdAt)}</td>
