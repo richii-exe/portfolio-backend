@@ -28,6 +28,29 @@ function App() {
         }
     }, [theme])
 
+    // Visitor tracking - ping backend every 15 seconds
+    useEffect(() => {
+        const sessionId = sessionStorage.getItem('visitorId') || `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        sessionStorage.setItem('visitorId', sessionId)
+
+        const pingVisitor = async () => {
+            try {
+                await fetch(`${import.meta.env.VITE_API_URL || ''}/api/visitor/ping`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId })
+                })
+            } catch (e) {
+                // Silent fail - don't affect user experience
+            }
+        }
+
+        pingVisitor() // Initial ping
+        const interval = setInterval(pingVisitor, 15000) // Ping every 15 seconds
+
+        return () => clearInterval(interval)
+    }, [])
+
     const toggleTheme = () => {
         setTheme(prev => prev === 'dark' ? 'light' : 'dark')
     }

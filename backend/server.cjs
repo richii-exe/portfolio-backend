@@ -95,6 +95,21 @@ const transporter = nodemailer.createTransport({
 });
 
 // ===============================
+// VISITOR TRACKING (In-Memory)
+// ===============================
+const activeVisitors = new Map(); // sessionId -> { lastSeen, userAgent, referrer }
+
+// Cleanup inactive visitors every 10 seconds
+setInterval(() => {
+    const now = Date.now();
+    for (const [sessionId, data] of activeVisitors) {
+        if (now - data.lastSeen > 30000) { // 30 seconds timeout
+            activeVisitors.delete(sessionId);
+        }
+    }
+}, 10000);
+
+// ===============================
 // PUBLIC API ROUTES
 // ===============================
 
@@ -191,6 +206,36 @@ app.post('/api/contact', async (req, res) => {
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', firebase: 'connected' });
+});
+
+// Visitor ping endpoint - frontend calls this every 15 seconds
+app.post('/api/visitor/ping', (req, res) => {
+    const sessionId = req.body.sessionId || req.ip;
+    const userAgent = req.get('User-Agent') || 'Unknown';
+    const referrer = req.get('Referer') || 'Direct';
+
+    activeVisitors.set(sessionId, {
+        lastSeen: Date.now(),
+        userAgent: userAgent.substring(0, 100),
+        referrer: referrer.substring(0, 200)
+    });
+
+    res.status(200).json({ success: true });
+});
+
+// Get active visitor count (admin)
+app.get('/api/admin/visitors', (req, res) => {
+    res.status(200).json({
+        success: true,
+        data: {
+            count: activeVisitors.size,
+            visitors: Array.from(activeVisitors.entries()).map(([id, data]) => ({
+                id: id.substring(0, 8) + '...',
+                lastSeen: new Date(data.lastSeen).toISOString(),
+                userAgent: data.userAgent
+            }))
+        }
+    });
 });
 
 // ===============================

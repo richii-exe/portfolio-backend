@@ -550,6 +550,12 @@
                 grid-template-columns: 1fr !important;
             }
         }
+
+        /* Pulse animation for live visitors */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
     </style>
 </head>
 
@@ -655,6 +661,13 @@
             <!-- Overview Tab -->
             <div class="tab-content active" id="overviewTab">
                 <div class="stats-grid">
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05)); border-color: rgba(16, 185, 129, 0.3);">
+                        <h3 style="display: flex; align-items: center; gap: 8px;">
+                            <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
+                            Live Visitors
+                        </h3>
+                        <div class="value" id="statLiveVisitors" style="color: #10b981;">0</div>
+                    </div>
                     <div class="stat-card blue">
                         <h3>Total Applications</h3>
                         <div class="value" id="statTotalApps">--</div>
@@ -994,10 +1007,28 @@
                     document.getElementById('statTotalContacts').textContent = data.data.totalContacts;
                     document.getElementById('statUnreadContacts').textContent = data.data.unreadContacts;
                 }
+                
+                // Also load live visitors
+                loadLiveVisitors();
             } catch (error) {
                 console.error('Error loading stats:', error);
             }
         }
+
+        async function loadLiveVisitors() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/visitors`);
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('statLiveVisitors').textContent = data.data.count;
+                }
+            } catch (error) {
+                console.error('Error loading visitors:', error);
+            }
+        }
+
+        // Poll live visitors every 10 seconds
+        setInterval(loadLiveVisitors, 10000);
 
         async function loadRecentApplications() {
             try {
