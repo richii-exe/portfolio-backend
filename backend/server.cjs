@@ -522,21 +522,29 @@ app.patch('/api/admin/reels/:id', async (req, res) => {
 // REVIEWS MANAGEMENT
 // ===============================
 
+// ===============================
+// REVIEWS MANAGEMENT
+// ===============================
+
 // Get approved reviews (Public)
 app.get('/api/reviews', async (req, res) => {
     try {
         const snapshot = await db.collection('reviews')
-            // .where('status', '==', 'approved') // Removed to avoid composite index requirement
+            // Firestore requires composite index for where + orderBy.
+            // Simplified: Fetch all and filter in memory since dataset is small.
             .orderBy('createdAt', 'desc')
             .get();
 
         const reviews = [];
         snapshot.forEach(doc => {
-            reviews.push({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data().createdAt?.toDate?.() || null
-            });
+            const data = doc.data();
+            if (data.status === 'approved') {
+                reviews.push({
+                    id: doc.id,
+                    ...data,
+                    createdAt: data.createdAt?.toDate?.() || null
+                });
+            }
         });
 
         res.status(200).json({ success: true, data: reviews });
@@ -556,7 +564,7 @@ app.post('/api/reviews', async (req, res) => {
             role: role || 'Client',
             content,
             rating: rating || 5,
-            status: 'approved', // Auto-approval as requested ("adds in the user page")
+            status: 'approved', // Auto-approve for now, Admin can remove later
             createdAt: admin.firestore.FieldValue.serverTimestamp()
         };
 
@@ -570,6 +578,64 @@ app.post('/api/reviews', async (req, res) => {
     } catch (error) {
         console.error('Error submitting review:', error);
         res.status(500).json({ success: false, message: 'Failed to submit review.' });
+    }
+});
+
+// ADMIN: Get all reviews
+app.get('/api/admin/reviews', async (req, res) => {
+    try {
+        const snapshot = await db.collection('reviews')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const reviews = [];
+        snapshot.forEach(doc => {
+            reviews.push({
+                id: doc.id,
+                ...doc.data(),
+                createdAt: doc.data().createdAt?.toDate?.() || null
+            });
+        });
+
+        res.status(200).json({ success: true, data: reviews });
+    } catch (error) {
+        console.error('Error fetching admin reviews:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch reviews.' });
+    }
+});
+
+// ADMIN: Update review status
+app.patch('/api/admin/reviews/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body; // 'approved' or 'rejected'
+
+        const { name, role, content, rating } = req.body;
+        const updateData = {};
+        if (typeof status !== 'undefined') updateData.status = status;
+        if (name) updateData.name = name;
+        if (role) updateData.role = role;
+        if (content) updateData.content = content;
+        if (rating) updateData.rating = rating;
+
+        await db.collection('reviews').doc(id).update(updateData);
+
+        res.status(200).json({ success: true, message: 'Review status updated.' });
+    } catch (error) {
+        console.error('Error updating review:', error);
+        res.status(500).json({ success: false, message: 'Failed to update review.' });
+    }
+});
+
+// ADMIN: Delete review
+app.delete('/api/admin/reviews/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.collection('reviews').doc(id).delete();
+        res.status(200).json({ success: true, message: 'Review deleted.' });
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete review.' });
     }
 });
 
