@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const TOTAL_FRAMES = 49
-const FPS = 18 // Slower speed as requested
+const FPS = 18 // Cinematic speed
 const LOOP_DELAY = 3000 // 3 seconds pause
 
 // Generate array of frame URLs
@@ -12,10 +12,14 @@ const frames = Array.from({ length: TOTAL_FRAMES }, (_, i) =>
 
 const HeroSequence = () => {
     const canvasRef = useRef(null)
-    const [imagesLoaded, setImagesLoaded] = useState(false)
+
+    // Loading State
+    const [firstFrameLoaded, setFirstFrameLoaded] = useState(false)
+    const [allImagesLoaded, setAllImagesLoaded] = useState(false)
     const [loadedCount, setLoadedCount] = useState(0)
-    const [loadError, setLoadError] = useState(false)
-    const [opacity, setOpacity] = useState(0) // Control canvas opacity for fade effect
+
+    // Animation State
+    const [opacity, setOpacity] = useState(0)
 
     const imagesRef = useRef([])
     const frameIndexRef = useRef(0)
@@ -24,66 +28,72 @@ const HeroSequence = () => {
     const ctxRef = useRef(null)
     const timeoutRef = useRef(null)
 
-    // Preload all images into Image objects
+    // 1. Initial Setup & First Frame Load
     useEffect(() => {
-        let loaded = 0
-        let errors = 0
-        const images = []
+        // Initialize images array
+        imagesRef.current = new Array(TOTAL_FRAMES).fill(null)
 
-        const checkComplete = () => {
-            if (loaded + errors === TOTAL_FRAMES) {
-                if (loaded > 0) setImagesLoaded(true)
-                else setLoadError(true)
-            }
+        // Load Frame 0 immediately
+        const img0 = new Image()
+        img0.crossOrigin = 'anonymous'
+        img0.src = frames[0]
+        img0.onload = () => {
+            imagesRef.current[0] = img0
+            setFirstFrameLoaded(true)
+            setLoadedCount(prev => prev + 1)
         }
+    }, [])
 
-        frames.forEach((src, index) => {
+    // 2. Background Load Remaining Frames
+    useEffect(() => {
+        if (!firstFrameLoaded) return
+
+        let loaded = 1 // Frame 0 is already done
+
+        frames.slice(1).forEach((src, i) => {
+            const realIndex = i + 1
             const img = new Image()
             img.crossOrigin = 'anonymous'
             img.src = src
             img.onload = () => {
+                imagesRef.current[realIndex] = img
                 loaded++
                 setLoadedCount(loaded)
-                checkComplete()
+                if (loaded === TOTAL_FRAMES) {
+                    setAllImagesLoaded(true)
+                }
             }
+            // Non-blocking error handling
             img.onerror = () => {
-                errors++
-                console.warn(`Failed to load hero frame: ${src}`)
-                checkComplete()
+                console.warn(`Failed frame: ${src}`)
+                loaded++
+                if (loaded === TOTAL_FRAMES) setAllImagesLoaded(true)
             }
-            images[index] = img
         })
+    }, [firstFrameLoaded])
 
-        imagesRef.current = images
-
-        return () => {
-            images.forEach(img => {
-                img.onload = null
-                img.onerror = null
-            })
-        }
-    }, [])
-
-    // Initialize canvas context once
+    // 3. Canvas Context
     useEffect(() => {
         if (!canvasRef.current) return
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d', { alpha: false })
-        if (!ctx) return
-        ctxRef.current = ctx
+        if (ctx) ctxRef.current = ctx
     }, [])
 
-    // Draw frame to canvas
+    // 4. Draw Logic
     const drawFrame = useCallback((index) => {
         const canvas = canvasRef.current
         const ctx = ctxRef.current
         if (!canvas || !ctx) return
 
-        // Round index to nearest integer for array access
         const frameIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1)
         const img = imagesRef.current[frameIndex]
 
-        if (!img || !img.complete || img.naturalWidth === 0) return
+        // If specific frame missing, try frame 0 fallback, else return
+        if (!img || !img.complete || img.naturalWidth === 0) {
+            if (imagesRef.current[0]) ctx.drawImage(imagesRef.current[0], 0, 0, canvas.width, canvas.height)
+            return
+        }
 
         const displayWidth = canvas.clientWidth || window.innerWidth
         const displayHeight = canvas.clientHeight || window.innerHeight
@@ -118,17 +128,27 @@ const HeroSequence = () => {
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight)
     }, [])
 
-    // Animation Loop with Reset/Fade Logic
+    // 5. Initial Draw (Frame 0)
     useEffect(() => {
-        if (!imagesLoaded) return
+        if (firstFrameLoaded && !allImagesLoaded) {
+            setOpacity(1)
+            drawFrame(0)
 
-        // Initial Start
-        setOpacity(1)
+            // Resize listener for static frame
+            const handleResize = () => drawFrame(0)
+            window.addEventListener('resize', handleResize)
+            return () => window.removeEventListener('resize', handleResize)
+        }
+    }, [firstFrameLoaded, allImagesLoaded, drawFrame])
+
+    // 6. Animation Loop (Only when ALL loaded)
+    useEffect(() => {
+        if (!allImagesLoaded) return
+
+        // Start Loop
         frameIndexRef.current = 0
         lastTimeRef.current = 0
-
-        // Initial draw check
-        if (imagesRef.current[0]) drawFrame(0)
+        setOpacity(1)
 
         const startLoop = () => {
             rafRef.current = requestAnimationFrame(animate)
@@ -142,34 +162,26 @@ const HeroSequence = () => {
 
             if (deltaTime > interval) {
                 if (frameIndexRef.current < TOTAL_FRAMES - 1) {
-                    // NEXT FRAME
                     frameIndexRef.current += 1
                     drawFrame(frameIndexRef.current)
                     lastTimeRef.current = time - (deltaTime % interval)
                     rafRef.current = requestAnimationFrame(animate)
                 } else {
-                    // SEQUENCE FINISHED
                     cancelAnimationFrame(rafRef.current)
 
-                    // Wait 3 seconds, then fade out and reset
+                    // Loop Delay
                     timeoutRef.current = setTimeout(() => {
-                        // Fade OUT
-                        setOpacity(0)
-
-                        // Wait for fade out transition (0.5s), then reset and Fade IN
+                        setOpacity(0) // Fade Out
                         setTimeout(() => {
                             frameIndexRef.current = 0
                             drawFrame(0)
-                            setOpacity(1)
+                            setOpacity(1) // Fade In
 
-                            // Restart loop after Fade IN completes
                             setTimeout(() => {
                                 lastTimeRef.current = 0
                                 startLoop()
                             }, 500)
-
-                        }, 500) // Match CSS transition duration
-
+                        }, 500)
                     }, LOOP_DELAY)
                 }
             } else {
@@ -177,25 +189,32 @@ const HeroSequence = () => {
             }
         }
 
-        // Small delay to ensure clear layout before starting
-        const t = setTimeout(() => {
-            startLoop()
-        }, 100)
+        startLoop()
+
+        // Handle Resize during animation
+        const handleResize = () => drawFrame(frameIndexRef.current)
+        window.addEventListener('resize', handleResize)
 
         return () => {
-            clearTimeout(t)
+            window.removeEventListener('resize', handleResize)
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
             if (rafRef.current) cancelAnimationFrame(rafRef.current)
         }
-    }, [imagesLoaded, drawFrame])
-
-    if (loadError) return null
+    }, [allImagesLoaded, drawFrame])
 
     return (
-        <section className="relative w-full h-screen bg-black overflow-hidden">
-            {!imagesLoaded && (
+        <section className="relative w-full h-[100dvh] bg-black overflow-hidden">
+            {/* Loading Indicator (Only shows until Frame 0 loads - very fast) */}
+            {!firstFrameLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center text-white/50 text-xs tracking-widest z-20">
-                    LOADING CINEMATIC... {Math.round((loadedCount / TOTAL_FRAMES) * 100)}%
+                    INITIALIZING...
+                </div>
+            )}
+
+            {/* Interactive Loading Status (Optional: Show buffering progress while viewing frame 0) */}
+            {firstFrameLoaded && !allImagesLoaded && (
+                <div className="absolute bottom-10 right-10 text-white/30 text-[10px] tracking-widest z-20">
+                    BUFFERING SEQUENCE: {Math.round((loadedCount / TOTAL_FRAMES) * 100)}%
                 </div>
             )}
 
@@ -203,12 +222,11 @@ const HeroSequence = () => {
                 ref={canvasRef}
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{
-                    opacity: imagesLoaded ? opacity : 0,
+                    opacity: firstFrameLoaded ? opacity : 0,
                     transition: 'opacity 0.5s ease-in-out'
                 }}
             />
 
-            {/* Cinematic Overlay */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80 pointer-events-none z-10" />
         </section>
     )
