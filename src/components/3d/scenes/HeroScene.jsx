@@ -7,21 +7,31 @@ const HeroScene = () => {
     const scroll = useScroll()
 
     useFrame((state, delta) => {
-        // Page 0 behavior
-        // Visible when scroll.offset is between 0 and 1/7
-        // Adjust opacity based on scroll position
+        // Move entire hero scene up as user scrolls down to mimic standard scrolling
+        // The factor '18' ensures it clears the view nicely as we move to the next section
+        if (group.current) {
+            group.current.position.y = scroll.offset * 18
+        }
     })
 
     return (
         <group ref={group}>
-            {/* Placeholder 3D Visual (e.g. Floating Sphere related to Cinematic Hero) */}
-            <mesh position={[0, 0, 0]}>
-                <sphereGeometry args={[1, 32, 32]} />
-                <meshStandardMaterial color="#ffffff" wireframe />
+            {/* Background Atmosphere - Dark Void but reactive to light */}
+            <mesh position={[0, 0, -5]} scale={[20, 10, 1]}>
+                <planeGeometry />
+                <meshStandardMaterial color="#050202" roughness={0.8} />
             </mesh>
-            <mesh position={[2, 1, -2]}>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color="#3b82f6" />
+
+            {/* Placeholder for "Cinematic Portrait" (will be replaced by Image) */}
+            {/* Increased intensity for better visibility */}
+            <pointLight position={[2, 2, 2]} intensity={50} color="#ff6b00" distance={20} decay={2} />
+            <pointLight position={[-3, -2, 3]} intensity={30} color="#00f0ff" distance={20} decay={2} />
+            <ambientLight intensity={1} />
+
+            {/* Temporary Placeholder Shape where the person would be */}
+            <mesh position={[0, -1, 0]}>
+                <capsuleGeometry args={[1, 3, 4, 8]} />
+                <meshStandardMaterial color="#1a1a1a" roughness={0.4} metalness={0.8} />
             </mesh>
         </group>
     )

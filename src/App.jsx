@@ -4,19 +4,23 @@ import { ScrollControls } from '@react-three/drei'
 import { Leva } from 'leva'
 import Experience from './components/3d/Experience'
 import LoadingScreen from './components/ui/LoadingScreen'
+import CinematicCursor from './components/ui/CinematicCursor'
 
 function App() {
     const [theme, setTheme] = useState('dark')
 
     return (
-        <main className="w-full h-screen bg-black overflow-hidden relative">
+        <main className="w-full h-screen bg-black overflow-hidden relative cursor-none">
+            {/* Custom Cursor */}
+            <CinematicCursor />
+
             {/* 3D Scene */}
             <Canvas
                 shadows
                 camera={{ position: [0, 0, 5], fov: 30 }}
                 dpr={[1, 1.5]} // Performance optimization
             >
-                <color attach="background" args={['#000000']} />
+                <color attach="background" args={['#050202']} />
 
                 <Suspense fallback={null}>
                     {/* ScrollControls manages the 3D scroll timeline. 
