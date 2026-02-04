@@ -55,6 +55,11 @@ body {
   cursor: none;
 }
 
+button,
+a {
+  cursor: none !important;
+}
+
 /* Post-Processing Effects (Macro Commercial Feel) */
 body::after {
   content: "";

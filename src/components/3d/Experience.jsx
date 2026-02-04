@@ -90,7 +90,7 @@ const Experience = ({ theme }) => {
                                 initial={{ y: 30, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 1, ease: 'easeOut', delay: 1.4 }}
-                                className="group relative px-8 py-3 rounded-full border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden transition-all duration-300 hover:bg-white hover:text-black"
+                                className="group relative px-8 py-3 rounded-full border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden transition-all duration-300 hover:bg-white hover:text-black cursor-none"
                             >
                                 <span className="relative z-10 text-xs font-bold tracking-widest">VIEW WORK</span>
                                 <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
@@ -99,7 +99,7 @@ const Experience = ({ theme }) => {
                                 initial={{ y: 30, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 1, ease: 'easeOut', delay: 1.6 }}
-                                className="px-8 py-3 rounded-full bg-[#ff6b00] text-black border border-[#ff6b00] hover:bg-[#ff8533] hover:scale-105 transition-all duration-300 text-xs font-bold tracking-widest shadow-[0_0_20px_rgba(255,107,0,0.4)]"
+                                className="px-8 py-3 rounded-full bg-[#ff6b00] text-black border border-[#ff6b00] hover:bg-[#ff8533] hover:scale-105 transition-all duration-300 text-xs font-bold tracking-widest shadow-[0_0_20px_rgba(255,107,0,0.4)] cursor-none"
                             >
                                 CONTACT ME
                             </motion.button>
@@ -107,8 +107,34 @@ const Experience = ({ theme }) => {
                     </div>
                 </motion.section>
 
-                <section className="h-screen w-full p-20 flex items-center justify-center pointer-events-none">
-                    <h1 className="text-white text-9xl font-bold tracking-tighter">SERVICES</h1>
+                <section className="h-screen w-full relative flex flex-col items-center justify-center overflow-hidden">
+                    {/* Floating Title (Optional, keep or remove) */}
+                    <div className="absolute top-20 text-xs font-bold tracking-[0.2em] text-white/50">SERVICES</div>
+
+                    {/* Infinite Marquee */}
+                    <div className="w-full flex whitespace-nowrap overflow-hidden">
+                        <motion.div
+                            className="flex gap-20 text-[8vw] font-black text-white/10 uppercase tracking-tighter"
+                            animate={{ x: "-50%" }}
+                            transition={{ ease: "linear", duration: 20, repeat: Infinity }}
+                        >
+                            {/* Duplicate content for seamless loop */}
+                            {[...Array(2)].map((_, i) => (
+                                <div key={i} className="flex gap-20 items-center">
+                                    <span>Cinematic Editing</span>
+                                    <span className="text-white/30">•</span>
+                                    <span>Video Editing</span>
+                                    <span className="text-white/30">•</span>
+                                    <span>VFX Compositing</span>
+                                    <span className="text-white/30">•</span>
+                                    <span>Color Grading</span>
+                                    <span className="text-white/30">•</span>
+                                    <span>Motion Graphics</span>
+                                    <span className="text-white/30">•</span>
+                                </div>
+                            ))}
+                        </motion.div>
+                    </div>
                 </section>
                 <section className="h-screen w-full p-20 flex items-center justify-center pointer-events-none">
                     <h1 className="text-white text-9xl font-bold tracking-tighter">PROJECTS</h1>

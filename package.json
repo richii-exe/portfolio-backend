@@ -21,16 +21,12 @@
     "firebase": "^12.8.0",
     "firebase-admin": "^13.6.0",
     "framer-motion": "^11.0.3",
-    "framer-motion-3d": "^12.4.13",
     "leva": "^0.10.1",
-    "lucide-react": "^0.309.0",
     "multer": "^2.0.2",
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-phone-input-2": "^2.15.1",
-    "react-use-measure": "^2.1.1",
     "three": "^0.160.1"
   },
   "devDependencies": {
